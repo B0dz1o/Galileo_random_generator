@@ -1,21 +1,41 @@
-#include <linux/init.h>
-#include <linux/module.h>
-#include <linux/slab.h>
+#include "generator_mod.h"
+
+struct timer_list myTimer;
 
 static int my_init(void)
 {
-	printk(KERN_ALERT "Modul z bledem 1\nZaczynam inicjalizacje\n");	
-	printk(KERN_ALERT "Inicjalizacja zakonczona\n");
+	printk(KERN_INFO "RAND_GEN->module inserted\n");
+	//check non-zero return
+	if(prepare_timer()){
+		printk(KERN_ALERT "RAND_GEN->unable to initialize timer!\n");
+	}
+	printk(KERN_INFO "RAND_GEN->initialized timer\n");
 	return 0;
 }
 static void my_exit(void)
 {
-	printk(KERN_ALERT "Do widzenia\n");
+	del_timer(&myTimer);
+	printk(KERN_INFO "RAND_GEN->removed module\n");
+}
+
+int prepare_timer(){
+	init_timer(&myTimer);
+	// call every second
+	myTimer.expires = jiffies + HZ;
+	myTimer.function = read_gpio;
+	add_timer(&myTimer);
+	return 0;
+}
+
+int update_timer(){
+	return mod_timer(&myTimer, jiffies + HZ);
+}
+
+void read_gpio(unsigned long data){
+	printk(KERN_INFO "Timer loop\n");
 }
 
 MODULE_LICENSE("GPL");
 
 module_init(my_init);
 module_exit(my_exit);
-
-
