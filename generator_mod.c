@@ -20,10 +20,10 @@ static void my_exit(void)
 int prepare_timer(){
 	static long int loopIndex = 0;
 	init_timer(&myTimer);
-	mt.data = ++loopIndex;
+	myTimer.data = ++loopIndex;
 	// call every second
-	myTimer.expires(jiffies + HZ);
-	mt.function = read_gpio;
+	myTimer.expires = jiffies + HZ;
+	myTimer.function = read_gpio;
 	add_timer(&myTimer);
 	return 0;
 }
