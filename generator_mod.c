@@ -28,9 +28,13 @@ int prepare_timer(){
 	return 0;
 }
 
+int update_timer(){
+	return mod_timer(myTimer,HZ);
+}
+
 void read_gpio(unsigned long data){
 	printk(KERN_INFO "Timer loop%ld",data);
-	if(!prepare_timer()){
+	if(!update_timer()){
 		printk(KERN_ALERT "RAND_GEN->unable to initialize timer!");
 	}
 }
