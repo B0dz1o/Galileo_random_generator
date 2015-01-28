@@ -10,4 +10,6 @@
 
 int prepare_timer(void);
 int update_timer(void);
+void init_gpio(void);
 void read_gpio(unsigned long data);
+void add_entropy(int joyX,int joyY,int iR);
