@@ -1,7 +1,3 @@
-#include <linux/init.h>
-#include <linux/module.h>
-#include <linux/timer.h>
-#include <linux/jiffies.h>
 #include "generator_mod.h"
 
 struct timer_list myTimer;
@@ -28,12 +24,12 @@ int prepare_timer(){
 	// call every second
 	myTimer.expires(jiffies + HZ);
 	mt.function = read_gpio;
-	add_timer(&mt);
+	add_timer(&myTimer);
 	return 0;
 }
 
 void read_gpio(unsigned long data){
-	printk(KERN_INFO "Timer loop%d",data);
+	printk(KERN_INFO "Timer loop%ld",data);
 	if(!prepare_timer()){
 		printk(KERN_ALERT "RAND_GEN->unable to initialize timer!");
 	}
