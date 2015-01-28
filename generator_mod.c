@@ -32,6 +32,15 @@ int update_timer(){
 }
 
 void read_gpio(unsigned long data){
+	int fd = sys_open("/dev/random",O_WRONLY,0);
+	if(fd > 0){
+		printk(KERN_INFO "File opened\n");
+	}
+	if(IS_ERR(fd)) {
+		int err = PTR_ERR(fd);
+		printk(KERN_ALERT "Error:%d\n",err);
+	}
+	sys_close(fd);
 	printk(KERN_INFO "Timer loop\n");
 }
 
