@@ -34,33 +34,20 @@ int update_timer(){
 
 void init_gpio(){
 	struct file *fd;
-	char buf[] = "37";
-	fd = filp_open("/sys/class/gpio/export",O_WRONLY,FMODE_WRITE);
-	fd->f_op->write(fd,buf,strlen(buf),0);
-	filp_close(fd,NULL);
-	printk(KERN_ALERT "Should be added\n");
-	add_entropy(1,2,3);
-	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
-	fd->f_op->write(fd,"36",3,0);
-	filp_close(fd,NULL);
-	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
-	fd->f_op->write(fd,"23",3,0);
-	filp_close(fd,NULL);
-	// fd = filp_open("/sys/class/gpio/gpio37/direction",O_WRONLY,0);
-	// fd->f_op->write(fd,"low",4,0);
-	// filp_close(fd,NULL);
-	// fd = filp_open("/sys/class/gpio/gpio36/direction",O_WRONLY,0);
-	// fd->f_op->write(fd,"low",4,0);
-	// filp_close(fd,NULL);
-	// fd = filp_open("/sys/class/gpio/gpio23/direction",O_WRONLY,0);
-	// fd->f_op->write(fd,"low",4,0);
-	// filp_close(fd,NULL);
 }
 
 void read_gpio(unsigned long data){
 	static int onOff = 0;
 	int xJoy,yJoy,iR;
 	struct file *fd;
+	char label[128];
+	int result = gpio_request(19,label);
+	printk(KERN_INFO "%d %s\n",result,label);
+	if (result){
+		printk(KERN_INFO "%d %s\n",result,label);
+		gpio_free(19);
+	}
+	
 //	printk(KERN_INFO "Timer loop\n");
 
 	// fd = filp_open("/sys/class/gpio/gpio28/value",O_WRONLY,0);
@@ -74,7 +61,7 @@ void read_gpio(unsigned long data){
 
 
 //	add_entropy(xJoy,yJoy,iR);
-	update_timer();
+//	update_timer();
 }
 
 void add_entropy(int xJoy, int yJoy, int iR){
