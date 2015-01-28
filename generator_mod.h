@@ -5,6 +5,7 @@
 #include <linux/random.h>
 #include <linux/syscalls.h>
 #include <linux/fcntl.h>
+#include <linux/fs.h>
 #include <asm/uaccess.h>
 
 int prepare_timer(void);

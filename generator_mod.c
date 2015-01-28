@@ -32,7 +32,8 @@ int update_timer(){
 }
 
 void read_gpio(unsigned long data){
-	int fd = sys_open("/dev/random",O_WRONLY,0);
+//	int fd = filp_open("/dev/random",O_RDONLY,0);
+	int fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
 	if(fd > 0){
 		printk(KERN_INFO "File opened\n");
 	}
@@ -40,8 +41,10 @@ void read_gpio(unsigned long data){
 		int err = PTR_ERR(fd);
 		printk(KERN_ALERT "Error:%d\n",err);
 	}
-	sys_close(fd);
+	printk(KERN_INFO "deskryptor_%d\n",fd);
+	filp_close(fd,NULL);
 	printk(KERN_INFO "Timer loop\n");
+	update_timer();
 }
 
 MODULE_LICENSE("GPL");
