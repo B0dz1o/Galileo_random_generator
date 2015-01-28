@@ -9,6 +9,7 @@ static int my_init(void)
 	if(prepare_timer()){
 		printk(KERN_ALERT "RAND_GEN->unable to initialize timer!\n");
 	}
+	init_gpio();
 	printk(KERN_INFO "RAND_GEN->initialized timer\n");
 	return 0;
 }
@@ -31,17 +32,55 @@ int update_timer(){
 	return mod_timer(&myTimer, jiffies + HZ);
 }
 
-void read_gpio(unsigned long data){
-	struct file *fd = filp_open("/dev/random",O_RDONLY,0);
-//	int fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
-	if(fd == -1){
-		printk(KERN_ALERT "Unable to open file\n");
-	}
-
-	fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,170);
+void init_gpio(){
+	struct file *fd;
+	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
+	fd->f_op->write(fd,"37",3,0);
 	filp_close(fd,NULL);
+	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
+	fd->f_op->write(fd,"36",3,0);
+	filp_close(fd,NULL);
+	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
+	fd->f_op->write(fd,"23",3,0);
+	filp_close(fd,NULL);
+	fd = filp_open("/sys/class/gpio/gpio37/direction",O_WRONLY,0);
+	fd->f_op->write(fd,"low",4,0);
+	filp_close(fd,NULL);
+	fd = filp_open("/sys/class/gpio/gpio36/direction",O_WRONLY,0);
+	fd->f_op->write(fd,"low",4,0);
+	filp_close(fd,NULL);
+	fd = filp_open("/sys/class/gpio/gpio23/direction",O_WRONLY,0);
+	fd->f_op->write(fd,"low",4,0);
+	filp_close(fd,NULL);
+}
+
+void read_gpio(unsigned long data){
+	static int onOff = 0;
+	int xJoy,yJoy,iR;
+	struct file *fd;
 	printk(KERN_INFO "Timer loop\n");
+
+	fd = filp_open("/sys/class/gpio/gpio28/value",O_WRONLY,0);
+	if(onOff){
+		fd->f_op->write(fd,"0",1,0);
+	} else{
+		fd->f_op->write(fd,"1",1,0);
+	}
+	onOff = !onOff;
+	filp_close(fd,NULL);
+
+
+//	add_entropy(xJoy,yJoy,iR);
 	update_timer();
+}
+
+void add_entropy(int xJoy, int yJoy, int iR){
+	struct file *fd;
+	fd = filp_open("/dev/random",O_WRONLY,0);
+	fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,xJoy);
+	fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,yJoy);
+	fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,iR);
+	filp_close(fd,NULL);
 }
 
 MODULE_LICENSE("GPL");
