@@ -1,11 +1,11 @@
 #include "generator_mod.h"
 
 struct timer_list myTimer;
-int stop_updating;
+int keep_updating;
 
 static int my_init(void)
 {
-	stop_updating = 0;
+	keep_updating = 1;
 	printk(KERN_INFO "RAND_GEN->module inserted\n");
 	//check non-zero return
 	if(prepare_timer()){
@@ -16,14 +16,13 @@ static int my_init(void)
 }
 static void my_exit(void)
 {
-	stop_updating = 1;
+	keep_updating = 0;
+	del_timer(&myTimer);
 	printk(KERN_INFO "RAND_GEN->removed module\n");
 }
 
 int prepare_timer(){
-	static long int loopIndex = 0;
 	init_timer(&myTimer);
-	myTimer.data = ++loopIndex;
 	// call every second
 	myTimer.expires = jiffies + HZ;
 	myTimer.function = read_gpio;
@@ -36,8 +35,8 @@ int update_timer(){
 }
 
 void read_gpio(unsigned long data){
-	printk(KERN_INFO "Timer loop%ld",data);
-	if(!stop_updating && !update_timer()){
+	printk(KERN_INFO "Timer loop");
+	if(keep_updating && !update_timer()){
 		printk(KERN_ALERT "RAND_GEN->unable to update timer!");
 	}
 }
