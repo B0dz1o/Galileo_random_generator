@@ -4,4 +4,5 @@
 #include <linux/jiffies.h>
 
 int prepare_timer(void);
+int update_timer(void);
 void read_gpio(unsigned long data);

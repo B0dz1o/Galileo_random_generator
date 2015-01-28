@@ -29,7 +29,7 @@ int prepare_timer(){
 }
 
 int update_timer(){
-	return mod_timer(myTimer,HZ);
+	return mod_timer(&myTimer,HZ);
 }
 
 void read_gpio(unsigned long data){
