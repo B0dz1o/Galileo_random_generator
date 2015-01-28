@@ -37,21 +37,21 @@ void init_gpio(){
 	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
 	fd->f_op->write(fd,"37",3,0);
 	filp_close(fd,NULL);
-	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
-	fd->f_op->write(fd,"36",3,0);
-	filp_close(fd,NULL);
-	fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
-	fd->f_op->write(fd,"23",3,0);
-	filp_close(fd,NULL);
-	fd = filp_open("/sys/class/gpio/gpio37/direction",O_WRONLY,0);
-	fd->f_op->write(fd,"low",4,0);
-	filp_close(fd,NULL);
-	fd = filp_open("/sys/class/gpio/gpio36/direction",O_WRONLY,0);
-	fd->f_op->write(fd,"low",4,0);
-	filp_close(fd,NULL);
-	fd = filp_open("/sys/class/gpio/gpio23/direction",O_WRONLY,0);
-	fd->f_op->write(fd,"low",4,0);
-	filp_close(fd,NULL);
+	// fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
+	// fd->f_op->write(fd,"36",3,0);
+	// filp_close(fd,NULL);
+	// fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
+	// fd->f_op->write(fd,"23",3,0);
+	// filp_close(fd,NULL);
+	// fd = filp_open("/sys/class/gpio/gpio37/direction",O_WRONLY,0);
+	// fd->f_op->write(fd,"low",4,0);
+	// filp_close(fd,NULL);
+	// fd = filp_open("/sys/class/gpio/gpio36/direction",O_WRONLY,0);
+	// fd->f_op->write(fd,"low",4,0);
+	// filp_close(fd,NULL);
+	// fd = filp_open("/sys/class/gpio/gpio23/direction",O_WRONLY,0);
+	// fd->f_op->write(fd,"low",4,0);
+	// filp_close(fd,NULL);
 }
 
 void read_gpio(unsigned long data){
@@ -60,14 +60,14 @@ void read_gpio(unsigned long data){
 	struct file *fd;
 	printk(KERN_INFO "Timer loop\n");
 
-	fd = filp_open("/sys/class/gpio/gpio28/value",O_WRONLY,0);
-	if(onOff){
-		fd->f_op->write(fd,"0",1,0);
-	} else{
-		fd->f_op->write(fd,"1",1,0);
-	}
-	onOff = !onOff;
-	filp_close(fd,NULL);
+	// fd = filp_open("/sys/class/gpio/gpio28/value",O_WRONLY,0);
+	// if(onOff){
+	// 	fd->f_op->write(fd,"0",1,0);
+	// } else{
+	// 	fd->f_op->write(fd,"1",1,0);
+	// }
+	// onOff = !onOff;
+	// filp_close(fd,NULL);
 
 
 //	add_entropy(xJoy,yJoy,iR);
