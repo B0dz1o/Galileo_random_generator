@@ -32,16 +32,13 @@ int update_timer(){
 }
 
 void read_gpio(unsigned long data){
-//	int fd = filp_open("/dev/random",O_RDONLY,0);
-	int fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
-	if(fd > 0){
-		printk(KERN_INFO "File opened\n");
+	struct file *fd = filp_open("/dev/random",O_RDONLY,0);
+//	int fd = filp_open("/sys/class/gpio/export",O_WRONLY,0);
+	if(fd == -1){
+		printk(KERN_ALERT "Unable to open file\n");
 	}
-	if(IS_ERR(fd)) {
-		int err = PTR_ERR(fd);
-		printk(KERN_ALERT "Error:%d\n",err);
-	}
-	printk(KERN_INFO "deskryptor_%d\n",fd);
+
+	fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,170);
 	filp_close(fd,NULL);
 	printk(KERN_INFO "Timer loop\n");
 	update_timer();
