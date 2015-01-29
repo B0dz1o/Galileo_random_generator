@@ -41,26 +41,15 @@ void read_gpio(unsigned long data){
 	static int onOff = 0;
 	int xJoy,yJoy,iR;
 	struct file *fd;
-	char label[] = "locked";
-	int result = gpio_request(19,label);
-//	gpio_direction_input(19);
-//	gpio_direction_output(19,1);
-//	gpio_free(19);
-	printk(KERN_INFO "%d %s\n",result,label);
-	
+	char label[32];
+	int result = gpio_request(19,"PINSET");
+	fd = filp_open("/sys/bus/iio/devices/iio\:device0/in_voltage0_raw",O_RDONLY,0);
+//	fd->f_op->read(fd,label,5,0);	
+	filp_close(fd,NULL);
 
-	// fd = filp_open("/sys/class/gpio/gpio28/value",O_WRONLY,0);
-	// if(onOff){
-	// 	fd->f_op->write(fd,"0",1,0);
-	// } else{
-	// 	fd->f_op->write(fd,"1",1,0);
-	// }
-	// onOff = !onOff;
-	// filp_close(fd,NULL);
-
-
-//	add_entropy(xJoy,yJoy,iR);
-//	update_timer();
+	printk(KERN_INFO "val:%s\n",label);
+	add_entropy(1,2,3);
+	update_timer();
 }
 
 void add_entropy(int xJoy, int yJoy, int iR){
