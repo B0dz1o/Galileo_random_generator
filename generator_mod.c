@@ -17,6 +17,7 @@ static void my_exit(void)
 {
 	del_timer(&myTimer);
 	printk(KERN_INFO "RAND_GEN->removed module\n");
+	gpio_free(19);
 }
 
 int prepare_timer(){
@@ -40,15 +41,13 @@ void read_gpio(unsigned long data){
 	static int onOff = 0;
 	int xJoy,yJoy,iR;
 	struct file *fd;
-	char label[128];
+	char label[] = "locked";
 	int result = gpio_request(19,label);
+//	gpio_direction_input(19);
+//	gpio_direction_output(19,1);
+//	gpio_free(19);
 	printk(KERN_INFO "%d %s\n",result,label);
-	if (result){
-		printk(KERN_INFO "%d %s\n",result,label);
-		gpio_free(19);
-	}
 	
-//	printk(KERN_INFO "Timer loop\n");
 
 	// fd = filp_open("/sys/class/gpio/gpio28/value",O_WRONLY,0);
 	// if(onOff){
