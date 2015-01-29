@@ -43,8 +43,9 @@ void read_gpio(unsigned long data){
 	struct file *fd;
 	char label[32];
 	int result = gpio_request(19,"PINSET");
+	gpio_direction_output(19,1);
 	fd = filp_open("/sys/bus/iio/devices/iio\:device0/in_voltage0_raw",O_RDONLY,0);
-//	fd->f_op->read(fd,label,5,0);	
+	fd->f_op->read(fd,label,5,0);	
 	filp_close(fd,NULL);
 
 	printk(KERN_INFO "val:%s\n",label);
