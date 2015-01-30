@@ -7,10 +7,11 @@
 #include <linux/fcntl.h>
 #include <linux/fs.h>
 #include <linux/gpio.h>
-#include <asm/uaccess.h>
+#include <linux/kernel.h>
 
 int prepare_timer(void);
 int update_timer(void);
 void init_gpio(void);
 void read_gpio(unsigned long data);
-void add_entropy(int joyX,int joyY,int iR);
+int read_analog(unsigned int gpio_allow, int analog_src);
+void add_entropy(int entSource);
