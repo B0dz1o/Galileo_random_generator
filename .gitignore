@@ -1,6 +1,6 @@
 # Object files
 *.o
-#*.ko
+*.ko
 *.obj
 *.elf
 
@@ -34,4 +34,3 @@ modules.order
 *.i*86
 *.x86_64
 *.hex
-

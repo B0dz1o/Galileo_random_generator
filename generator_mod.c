@@ -75,7 +75,7 @@ int read_analog(unsigned int gpio_allow, int analog_src){
 			sprintf(path,"/sys/bus/iio/devices/iio\\:device0/in_voltage%d_raw",analog_src);
 			fd = filp_open(path,O_RDONLY,0);
 			errValue = (int) fd;
-			if(fd == 0){
+			if(fd >= 0){
 				///if successfully opened, read data and close descriptor
 				fd->f_op->read(fd,analog_value,5,0);
 				filp_close(fd,NULL);
@@ -103,7 +103,7 @@ void add_entropy(int entSource){
 	///add new data to system entropy pool, using predefined ioctl interface
 	struct file *fd;
 	fd = filp_open("/dev/random",O_WRONLY,0);
-	if(fd == 0){
+	if(fd >= 0){
 		///successful file descriptor open
 		fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,entSource);
 		filp_close(fd,NULL);
