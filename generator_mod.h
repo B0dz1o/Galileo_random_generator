@@ -15,4 +15,3 @@ void init_gpio(void);
 void read_gpio(unsigned long data);
 int read_analog(unsigned int gpio_allow, int analog_src);
 void add_entropy(int entSource);
-
