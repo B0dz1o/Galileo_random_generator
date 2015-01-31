@@ -100,15 +100,15 @@ int read_analog(unsigned int gpio_allow, int analog_src){
 }
 
 void add_entropy(int entSource){
-	///add new data to system entropy pool, using predefined ioctl interface
-	struct file *fd;
-	fd = filp_open("/dev/random",O_WRONLY,0);
-	if(fd >= 0){
-		///successful file descriptor open
-		fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,entSource);
-		filp_close(fd,NULL);
-	}
-	return;
+	// ///add new data to system entropy pool, using predefined ioctl interface
+	// struct file *fd;
+	// fd = filp_open("/dev/random",O_WRONLY,0);
+	// if(fd >= 0){
+	// 	///successful file descriptor open
+	// 	fd->f_op->unlocked_ioctl(fd,RNDADDENTROPY,entSource);
+	// 	filp_close(fd,NULL);
+	// }
+	// return;
 }
 
 MODULE_LICENSE("GPL");
