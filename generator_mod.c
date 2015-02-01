@@ -6,8 +6,6 @@ author: Piotr Bogdan
 
 #include "generator_mod.h"
 
-struct timer_list myTimer;
-
 static int my_init(void)
 {
 	int gpio_allow = 37,errValue;
@@ -40,21 +38,6 @@ static void my_exit(void)
 	del_timer(&myTimer);
 //	gpio_free(26);
 	printk(KERN_INFO "RAND_GEN->removed module\n");
-}
-
-int prepare_timer(){
-	///create timer that allows kernel module to work continuously
-	init_timer(&myTimer);
-	///call every second
-	myTimer.expires = jiffies + HZ;
-	myTimer.function = read_gpio;
-	add_timer(&myTimer);
-	return 0;
-}
-
-int update_timer(){
-	///update timer - do the same in 1 second
-	return mod_timer(&myTimer, jiffies + HZ);
 }
 
 void read_gpio(unsigned long data){

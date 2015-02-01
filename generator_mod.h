@@ -10,8 +10,6 @@
 #include <linux/kernel.h>
 #include <linux/delay.h>
 
-int prepare_timer(void);
-int update_timer(void);
 void init_gpio(void);
 void read_gpio(unsigned long data);
 int read_analog(unsigned int gpio_allow, int analog_src);
