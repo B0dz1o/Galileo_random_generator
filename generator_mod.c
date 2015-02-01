@@ -15,11 +15,11 @@ static int my_init(void)
 	gpio_free(gpio_allow);
 
 	gpio_allow = 26;
-	errValue = gpio_request(gpio_allow,"ALLOW_ADC");	
+	errValue = gpio_request(gpio_allow,"ALLOW_ADC");
 	printk(KERN_ALERT "%d gpio returned %d\n",gpio_allow,errValue);
 	errValue = gpio_direction_output(26,1);
 	gpio_set_value(gpio_allow, 1);
-	gpio_free(26);	
+	gpio_free(26);
 	printk(KERN_INFO "turned output high, code:%d\n",errValue);
 	return 0;
 }
@@ -27,12 +27,12 @@ static void my_exit(void)
 {
 	int gpio_allow = 26,errValue;
 	gpio_free(26);
-	errValue = gpio_request(gpio_allow,"ALLOW_ADC");	
+	errValue = gpio_request(gpio_allow,"ALLOW_ADC");
 	printk(KERN_ALERT "%d gpio returned %d\n",gpio_allow,errValue);
 	errValue = gpio_direction_output(26,0);
 	gpio_set_value(gpio_allow, 0);
 	printk(KERN_INFO "turned output high, code:%d\n",errValue);
-	gpio_free(26);	
+	gpio_free(26);
 
 	///remove timer to break from loop
 	del_timer(&myTimer);
@@ -60,7 +60,6 @@ void read_gpio(unsigned long data){
 	}
 */
 	///continue working, repeat every second
-	update_timer();
 }
 
 int read_analog(unsigned int gpio_allow, int analog_src){
