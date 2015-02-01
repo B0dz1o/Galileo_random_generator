@@ -10,18 +10,35 @@ struct timer_list myTimer;
 
 static int my_init(void)
 {
-	///check non-zero return
-	if(prepare_timer()){
-		printk(KERN_ALERT "RAND_GEN->unable to initialize timer!\n");
-	} else {
-		printk(KERN_INFO "RAND_GEN->initialized timer\n");
-	}
+	int gpio_allow = 37,errValue;
+	printk(KERN_ALERT "RAND_GEN->initialized timer\n");
+	errValue = gpio_request_one(gpio_allow,GPIOF_INIT_LOW,"ALLOW_ADC");
+	printk(KERN_ALERT "%d gpio returned %d\n",gpio_allow,errValue);
+	gpio_free(gpio_allow);
+
+	gpio_allow = 26;
+	errValue = gpio_request(gpio_allow,"ALLOW_ADC");	
+	printk(KERN_ALERT "%d gpio returned %d\n",gpio_allow,errValue);
+	errValue = gpio_direction_output(26,1);
+	gpio_set_value(gpio_allow, 1);
+	gpio_free(26);	
+	printk(KERN_INFO "turned output high, code:%d\n",errValue);
 	return 0;
 }
 static void my_exit(void)
 {
+	int gpio_allow = 26,errValue;
+	gpio_free(26);
+	errValue = gpio_request(gpio_allow,"ALLOW_ADC");	
+	printk(KERN_ALERT "%d gpio returned %d\n",gpio_allow,errValue);
+	errValue = gpio_direction_output(26,0);
+	gpio_set_value(gpio_allow, 0);
+	printk(KERN_INFO "turned output high, code:%d\n",errValue);
+	gpio_free(26);	
+
 	///remove timer to break from loop
 	del_timer(&myTimer);
+//	gpio_free(26);
 	printk(KERN_INFO "RAND_GEN->removed module\n");
 }
 
@@ -44,6 +61,7 @@ void read_gpio(unsigned long data){
 	///check 3 analog inputs and read data from them in case of non-error return
 	int analogValue;
 	analogValue = read_analog(37,0); ///read from A0
+	add_entropy(17);
 	analogValue = read_analog(36,1); ///read from A1
 	analogValue = read_analog(23,2); ///read from A1
 /*	if (analogValue >= 0) {
@@ -67,31 +85,18 @@ int read_analog(unsigned int gpio_allow, int analog_src){
 	///certain gpio ports must be set to "output 0"
 	char analog_value[8];
 	int errValue;
-	errValue = gpio_request(gpio_allow,"AD_ENABLE");
-	printk(KERN_INFO "gpio_request returned %d\n",errValue);
+	struct file *fd;
+	char path[64];
+	errValue = gpio_request_one(gpio_allow,GPIOF_INIT_LOW,"ALLOW_ADC");
+	printk(KERN_INFO "%d requested : %d\n",gpio_allow,errValue);
 	if (errValue == 0){
-		errValue = gpio_direction_output(gpio_allow,0);
-/*
-		errValue = gpio_direction_output(gpio_allow,0);
-		///set 0 output so that analog port can be used as input
+//		errValue = gpio_direction_output(gpio_allow, 0);
 		if(errValue == 0){
-			struct file *fd;
-			char path[64];
-			///prepare path to read from chosen analog input, A0-A2
-			sprintf(path,"/sys/bus/iio/devices/iio\\:device0/in_voltage%d_raw",analog_src);
-			fd = filp_open(path,O_RDONLY,0);
-			errValue = (int) fd;
-			if(fd >= 0){
-				///if successfully opened, read data and close descriptor
-				fd->f_op->read(fd,analog_value,5,0);
-				filp_close(fd,NULL);
-			}
-			///stop using gpio port
-			gpio_free(gpio_allow);
+			printk(KERN_INFO "%d requested : %d\n",gpio_allow,errValue);
 		}
-*/
 	}
 	gpio_free(gpio_allow);
+	///prepare path to read from chosen analog input, A0-A2
 	if (errValue != 0){
 		///in case of error, send through its code
 		printk(KERN_ALERT "Analog read error:%d\n",errValue);
