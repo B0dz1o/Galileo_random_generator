@@ -8,6 +8,7 @@
 #include <linux/fs.h>
 #include <linux/gpio.h>
 #include <linux/kernel.h>
+#include <linux/delay.h>
 
 int prepare_timer(void);
 int update_timer(void);
