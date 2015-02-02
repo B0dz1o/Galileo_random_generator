@@ -9,10 +9,10 @@
 #include <linux/gpio.h>
 #include <linux/kernel.h>
 #include <linux/delay.h>
+#include <linux/hw_random.h>
 
-int prepare_timer(void);
-int update_timer(void);
 void init_gpio(void);
 void read_gpio(unsigned long data);
 int read_analog(unsigned int gpio_allow, int analog_src);
 void add_entropy(int entSource);
+int read_random(struct hwrng *rng, void* data, size_t max, bool wait);

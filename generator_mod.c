@@ -6,11 +6,19 @@ author: Piotr Bogdan
 
 #include "generator_mod.h"
 
-struct timer_list myTimer;
+struct hwrng* this_device;
 
 static int my_init(void)
-{
+{	
 	int gpio_allow = 37,errValue;
+	this_device->name = "A0_till_A2";
+//	this_device->quality = 100;
+///quality field is not present in 3.8.* kernel
+	this_device->priv = 17000;
+	this_device->read = read_random;
+	
+	hwrng_register(this_device);
+
 	printk(KERN_ALERT "RAND_GEN->initialized timer\n");
 	errValue = gpio_request_one(gpio_allow,GPIOF_INIT_LOW,"ALLOW_ADC");
 	printk(KERN_ALERT "%d gpio returned %d\n",gpio_allow,errValue);
@@ -26,8 +34,9 @@ static int my_init(void)
 	return 0;
 }
 static void my_exit(void)
-{
+{	
 	int gpio_allow = 26,errValue;
+	hwrng_unregister(this_device);
 	gpio_free(26);
 	errValue = gpio_request(gpio_allow,"ALLOW_ADC");	
 	printk(KERN_ALERT "%d gpio returned %d\n",gpio_allow,errValue);
@@ -37,24 +46,9 @@ static void my_exit(void)
 	gpio_free(26);	
 
 	///remove timer to break from loop
-	del_timer(&myTimer);
+
 //	gpio_free(26);
 	printk(KERN_INFO "RAND_GEN->removed module\n");
-}
-
-int prepare_timer(){
-	///create timer that allows kernel module to work continuously
-	init_timer(&myTimer);
-	///call every second
-	myTimer.expires = jiffies + HZ;
-	myTimer.function = read_gpio;
-	add_timer(&myTimer);
-	return 0;
-}
-
-int update_timer(){
-	///update timer - do the same in 1 second
-	return mod_timer(&myTimer, jiffies + HZ);
 }
 
 void read_gpio(unsigned long data){
@@ -77,7 +71,6 @@ void read_gpio(unsigned long data){
 	}
 */
 	///continue working, repeat every second
-	update_timer();
 }
 
 int read_analog(unsigned int gpio_allow, int analog_src){
@@ -85,8 +78,8 @@ int read_analog(unsigned int gpio_allow, int analog_src){
 	///certain gpio ports must be set to "output 0"
 	char analog_value[8];
 	int errValue;
-	struct file *fd;
-	char path[64];
+//	struct file *fd;
+//	char path[64];
 	errValue = gpio_request_one(gpio_allow,GPIOF_INIT_LOW,"ALLOW_ADC");
 	printk(KERN_INFO "%d requested : %d\n",gpio_allow,errValue);
 	if (errValue == 0){
@@ -122,6 +115,13 @@ void add_entropy(int entSource){
 		filp_close(fd,NULL);
 	}
 	return;
+}
+
+int read_random(struct hwrng *rng, void* data, size_t max, bool wait) {
+	int myData[] = {1,7,30,452};
+	printk(KERN_INFO "data read\n");	
+	data = myData;
+	return 32;
 }
 
 MODULE_LICENSE("GPL");
