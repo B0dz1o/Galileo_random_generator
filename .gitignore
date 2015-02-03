@@ -6,6 +6,7 @@
 
 # Temp files
 *~
+temp/
 
 # Precompiled Headers
 *.gch

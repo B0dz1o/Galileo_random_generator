@@ -7,7 +7,6 @@ author: Piotr Bogdan
 #include "generator_mod.h"
 
 struct hwrng this_device;
-struct iio_map* map_analog;
 struct iio_channel channel_analog;
 
 static int my_init(void)
@@ -33,16 +32,20 @@ int read_analog(unsigned int gpio_allow, int analog_src){
 	///function is called from hw_random driver
 	const int diode_gpio = 3;
 	int err_value, diode_err_value;
-	char analog_value[8];
+	char analog_value[8] = "";
 	diode_err_value = gpio_request(diode_gpio,"diode");
-	if (diode_err_valuegpio_direction_output(diode_gpio,1);
-	gpio_set_value(diode_gpio,1);
-	err_value = gpio_request(gpio_allow,"ALLOW_ADC");s
-
-	printk(KERN_ALERT "Request:%d\n",errValue);
+	if (diode_err_value == 0){
+		diode_err_value = gpio_direction_output(diode_gpio,0);
+		if (diode_err_value == 0){
+			gpio_set_value(diode_gpio,0);
+		}
+	}
+	printk(KERN_ALERT "diode:%d\n",diode_err_value);
+	err_value = gpio_request(gpio_allow,"ALLOW_ADC");
+	printk(KERN_ALERT "Request:%d\n",err_value);
 	if (err_value == 0){
 		err_value = gpio_direction_output(gpio_allow, 0);
-		printk(KERN_ALERT "Direction output:%d\n",errValue);
+		printk(KERN_ALERT "Direction output:%d\n",err_value);
 		if(err_value == 0){
 			gpio_set_value(gpio_allow,0);	
 //READING FROM ANALOG CRASHES SYSTEM
@@ -52,14 +55,15 @@ int read_analog(unsigned int gpio_allow, int analog_src){
 */
 		}
 	}
-	gpio_set_value(diode_gpio,0);
-	gpio_free(diode_gpio);
+	if (diode_err_value == 0){
+		gpio_set_value(diode_gpio,1);
+		gpio_free(diode_gpio);
+	}
 	gpio_free(gpio_allow);
-	///prepare path to read from chosen analog input, A0-A2
-	if (errValue != 0){
+	if (err_value != 0){
 		///in case of error, send through its code
-		printk(KERN_ALERT "Analog read error:%d\n",errValue);
-		return errValue;
+		printk(KERN_ALERT "Analog read error:%d\n",err_value);
+		return err_value;
 	} else	
 		printk(KERN_ALERT "Read value:%s\n",analog_value);
 		return 0;
