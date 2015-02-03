@@ -8,7 +8,7 @@ author: Piotr Bogdan
 
 struct hwrng this_device;
 struct iio_map* map_analog;
-struct iio_channel* channel_analog;
+struct iio_channel channel_analog;
 
 static int my_init(void)
 {	
@@ -32,31 +32,24 @@ int read_analog(unsigned int gpio_allow, int analog_src){
 	///also, to have some visible effect, the in-board diode blink whenever this
 	///function is called from hw_random driver
 	const int diode_gpio = 3;
-	int errValue;
+	int err_value, diode_err_value;
 	char analog_value[8];
-	gpio_request(diode_gpio,"diode");
-	gpio_direction_output(diode_gpio,1);
+	diode_err_value = gpio_request(diode_gpio,"diode");
+	if (diode_err_valuegpio_direction_output(diode_gpio,1);
 	gpio_set_value(diode_gpio,1);
-	errValue = gpio_request(gpio_allow,"ALLOW_ADC");
+	err_value = gpio_request(gpio_allow,"ALLOW_ADC");s
+
 	printk(KERN_ALERT "Request:%d\n",errValue);
-	if (errValue == 0){
-		errValue = gpio_direction_output(gpio_allow, 0);
+	if (err_value == 0){
+		err_value = gpio_direction_output(gpio_allow, 0);
 		printk(KERN_ALERT "Direction output:%d\n",errValue);
-		if(errValue == 0){
+		if(err_value == 0){
 			gpio_set_value(gpio_allow,0);	
-//ALL THE MAGIC IS HERE
-
-
-
-
-
-
-
-
-
-
-
-//END OF MAGIC
+//READING FROM ANALOG CRASHES SYSTEM
+/*			
+			channel_analog = *(iio_channel_get("iio:device0","A_input"));
+			iio_channel_release(&channel_analog);
+*/
 		}
 	}
 	gpio_set_value(diode_gpio,0);
